@@ -3,7 +3,7 @@ import 'package:my_creative_routine/core/utils/app_assets.dart';
 import 'package:my_creative_routine/core/utils/app_colors.dart';
 import 'package:my_creative_routine/core/utils/app_fonts.dart';
 import 'package:my_creative_routine/core/widgets/custom_txt_field.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/home_screen.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/pages/home_screen.dart';
 import 'package:my_creative_routine/features/register_screen/presentation/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 36),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -50,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icons.person_outline,
                   ),
                   const SizedBox(height: 16),
-
                   CustomTextField(
                     controller: _passwordController,
                     hintText: 'Password',
@@ -62,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -84,7 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

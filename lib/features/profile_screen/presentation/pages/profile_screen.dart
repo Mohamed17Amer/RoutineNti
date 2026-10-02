@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:my_creative_routine/core/utils/app_assets.dart';
 import 'package:my_creative_routine/core/utils/app_colors.dart';
 import 'package:my_creative_routine/core/utils/app_fonts.dart';
-import 'package:my_creative_routine/features/profile_screen/presentation/change_password_screen.dart';
-import 'package:my_creative_routine/features/profile_screen/presentation/profile_menu_item.dart';
-import 'package:my_creative_routine/features/profile_screen/presentation/settings_screen.dart';
-import 'package:my_creative_routine/features/profile_screen/presentation/update_profile_screen.dart';
+import 'package:my_creative_routine/features/profile_screen/presentation/pages/change_password_screen.dart';
+import 'package:my_creative_routine/features/profile_screen/presentation/widgets/profile_menu_item.dart';
+import 'package:my_creative_routine/features/profile_screen/presentation/pages/settings_screen.dart';
+import 'package:my_creative_routine/features/profile_screen/presentation/pages/update_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

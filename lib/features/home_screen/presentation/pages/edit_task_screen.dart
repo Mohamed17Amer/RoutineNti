@@ -4,8 +4,8 @@ import 'package:my_creative_routine/core/utils/app_colors.dart';
 import 'package:my_creative_routine/core/utils/app_fonts.dart';
 import 'package:my_creative_routine/core/utils/task_date_picker.dart';
 import 'package:my_creative_routine/core/widgets/custom_txt_field.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/group_dropdown.dart';
-import '../data/models/task_model.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/widgets/group_dropdown.dart';
+import '../../data/models/task_model.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final TaskModel task;

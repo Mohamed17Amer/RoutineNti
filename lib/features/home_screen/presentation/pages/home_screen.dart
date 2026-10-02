@@ -3,11 +3,11 @@ import 'package:my_creative_routine/core/utils/app_assets.dart';
 import 'package:my_creative_routine/core/utils/app_colors.dart';
 import 'package:my_creative_routine/core/utils/app_fonts.dart';
 import 'package:my_creative_routine/features/home_screen/data/models/task_model.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/add_task_screen.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/edit_task_screen.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/empty_task_widget.dart';
-import 'package:my_creative_routine/features/home_screen/presentation/tasks_list_widgets.dart';
-import 'package:my_creative_routine/features/profile_screen/presentation/profile_screen.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/pages/add_task_screen.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/pages/edit_task_screen.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/widgets/empty_task_widget.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/widgets/tasks_list_widgets.dart';
+import 'package:my_creative_routine/features/profile_screen/presentation/pages/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
