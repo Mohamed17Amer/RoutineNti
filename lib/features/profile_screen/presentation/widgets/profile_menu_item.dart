@@ -5,12 +5,14 @@ class ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final Color color;
 
   const ProfileMenuItem({
     super.key,
     required this.icon,
     required this.title,
     required this.onTap,
+    this.color = AppColors.textBlack,
   });
 
   @override
@@ -30,13 +32,13 @@ class ProfileMenuItem extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppColors.textBlack, size: 20),
+        leading: Icon(icon, color: color, size: 20),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
+            color: color,
           ),
         ),
         trailing: const Icon(

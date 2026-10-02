@@ -12,6 +12,8 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
   final bool readOnly;
   final VoidCallback? onTap;
+  final FormFieldValidator<String>? validator;
+  final TextInputAction textInputAction;
 
   const CustomTextField({
     super.key,
@@ -24,42 +26,53 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.readOnly = false,
     this.onTap,
+    this.validator,
+    this.textInputAction = TextInputAction.next,
   });
+
+  OutlineInputBorder _border(Color color) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(color: color),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.fieldFill,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.fieldBorder),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword ? isObscured : false,
-        maxLines: isPassword ? 1 : maxLines,
-        readOnly: readOnly,
-        onTap: onTap,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          prefixIcon: prefixIcon == null
-              ? null
-              : Icon(prefixIcon, color: AppColors.textGrey, size: 20),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    isObscured ? Icons.lock_outline : Icons.lock_open,
-                    color: AppColors.textGrey,
-                    size: 20,
-                  ),
-                  onPressed: onToggleVisibility,
-                )
-              : null,
-          hintText: hintText,
-          hintStyle: AppFonts.inputLabel,
-        ),
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword ? isObscured : false,
+      maxLines: isPassword ? 1 : maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
+      validator: validator,
+      textInputAction: textInputAction,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: AppColors.fieldFill,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: _border(AppColors.fieldBorder),
+        enabledBorder: _border(AppColors.fieldBorder),
+        focusedBorder: _border(AppColors.primary),
+        errorBorder: _border(AppColors.danger),
+        focusedErrorBorder: _border(AppColors.danger),
+        prefixIcon: prefixIcon == null
+            ? null
+            : Icon(prefixIcon, color: AppColors.textGrey, size: 20),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  isObscured ? Icons.lock_outline : Icons.lock_open,
+                  color: AppColors.textGrey,
+                  size: 20,
+                ),
+                onPressed: onToggleVisibility,
+              )
+            : null,
+        hintText: hintText,
+        hintStyle: AppFonts.inputLabel,
       ),
     );
   }

@@ -1,106 +1,70 @@
-اسم المشروع: My Creative Routine
-النوع: تطبيق موبايل Flutter - إدارة مهام يومية (To-Do)
+Project: My Creative Routine
+Type: Flutter mobile app - Personal tasks (To-Do) connected to an API
 
 ==================================================
-أولاً: طلب العميل
+CLIENT REQUEST
 ==================================================
 
-أنا طالب تطبيق مهام شخصي اسمه "My Creative Routine"، ألوانه أخضر وأبيض،
-والفكرة إني أنظم بيه يومي ومهامي بشكل بسيط.
+Hi, I need a personal tasks app called "My Creative Routine". Green and white colors,
+and the idea is to organize my day and my tasks in a simple way.
 
-المرحلة دي عايزها UI كاملة ومتوصلة ببعضها، من غير backend،
-والمهام تتخزن في الذاكرة بس لحد ما نربط API في المرحلة اللي بعدها.
+The UI screens are already designed. What I need now is to connect everything to our backend
+(I'm sending you the Postman collection, TODO.json) and make sure every form is validated.
+Nothing should be static anymore.
 
-المطلوب:
+What I need:
 
-- Splash فيها اللوجو واسم التطبيق، ثانيتين وتدخل.
-- شاشة "Let's Start" فيها صورة وجملة ترحيب وزرار يوديني على التسجيل.
-- Register: صورة فوق وعليها "Pick Image"، و username و password و confirm password،
-  والباسورد يبقى مخفي وفيه أيقونة أظهره بيها.
-- Login: username و password ولينك "Don't Have An Account? Register".
-- الرئيسية: صورة المستخدم و"Hello!" واسمه فوق، وتحتهم "Tasks" وجنبها عدد المهام.
-  كل مهمة كارت أخضر فاتح فيه العنوان والوقت والوصف.
-  ولو مفيش مهام تظهر صورة وجملة "There are no tasks yet".
-  وزرار عائم أضيف بيه مهمة.
-- Add Task: صورة، عنوان، وصف، اختيار المجموعة (Home / Personal / Work) كل واحدة بأيقونة ولون،
-  ووقت الانتهاء بـ date picker.
-- Edit Task: يظهر حالة المهمة (In Progress / Done)، أقدر أعدل كل حاجة،
-  وفيه Mark as Done و Update و Delete فوق.
-- لما أدوس على صورتي في الرئيسية تفتح البروفايل، وفيه 3 اختيارات:
-  Profile (تعديل الاسم) - Change Password - Settings (اختيار اللغة AR / EN).
-
-==================================================
-ثانياً: اللي اتعمل (رد المبرمج)
-==================================================
-
-المرحلة الأولى اتسلمت، وكل الشاشات متوصلة ببعض:
-
-1. Splash: Timer ثانيتين وبعدين pushReplacement على شاشة Let's Start،
-   ومتأكد من mounted قبل التنقل.
-2. Let's Start -> Register -> Login -> Home، كلهم بـ pushReplacement
-   عشان المستخدم ميرجعش بالـ back لشاشات الدخول.
-   التسجيل والدخول حالياً شكل بس (مفيش تحقق) لحد ما يتربطوا بالـ API.
-3. Home:
-   - فيه مهمتين تجريبيتين عشان الشاشة متبقاش فاضية في الديمو.
-   - الكارت بيعرض أيقونة المجموعة بلونها، ولو المهمة خلصانة العنوان بيتشطب.
-   - الضغط على الهيدر بيفتح البروفايل.
-4. Add Task:
-   - العنوان إجباري، لو فاضي بتظهر SnackBar.
-   - وقت الانتهاء بيتاخد من date picker وبعده time picker،
-     ويتكتب بالشكل dd/MM/yyyy مع الساعة. لو المستخدم مختارش وقت بيتكتب "Today".
-   - الشاشة بترجع TaskModel جديد للرئيسية عن طريق Navigator.pop.
-5. Edit Task:
-   - Mark as Done بقى toggle (Done / In Progress) والنص اللي فوق بيتغير معاه.
-   - Update بيرجع نسخة متعدلة من المهمة (copyWith) والرئيسية بتبدلها مكان القديمة.
-   - Delete بيرجع 'delete' والرئيسية بتشيل المهمة من الليستة.
-6. Profile: قائمة بـ 3 عناصر كل عنصر بيفتح شاشته.
-   Change Password فيها 3 خانات كل واحدة ليها إظهار/إخفاء مستقل.
-   Settings فيها toggle للغة (لسه شكل بس، الترجمة في المرحلة الجاية).
+- Register: username, password, confirm password, and an optional profile picture
+  ("Pick Image" at the top). Check the fields before sending: username at least 3 characters,
+  password at least 6, and the two passwords must match.
+- Login: username and password. If the user already logged in before, opening the app should
+  take them straight to their tasks without logging in again.
+- The access token expires quickly, so the app should renew it with the refresh token on its own.
+  If that doesn't work, send the user back to Login with a clear message.
+- Home: the user's real name and picture at the top, and their tasks from the server.
+  Show a loader while loading, a message with "Try again" if something fails,
+  and the empty state if there are no tasks. I want to pull down to refresh.
+- Add Task: title and description are required, an optional image, the group
+  (Home / Personal / Work), and an end date and time.
+- Edit Task: edit everything including the image, mark it Done / In Progress, update, and delete
+  (ask me before deleting).
+- Profile: update my name and picture, change my password (old, new, confirm - the new one
+  can't be the same as the old one), log out, and delete my account (with a confirmation).
+- Any error from the server should appear as a readable message, not a crash or an empty screen.
 
 ==================================================
-ثالثاً: السيستم من جوه
+DELIVERY NOTE (DEVELOPER)
 ==================================================
 
-lib/
-  main.dart                       -> MyCreativeRoutineApp، الخط Poppins و Material 3
-  core/
-    utils/
-      app_colors.dart             -> الأخضر الأساسي 0xFF139E53 ودرجاته وألوان النصوص والحقول
-      app_fonts.dart              -> text styles ثابتة (title, body, button, input)
-      app_assets.dart             -> مسارات الصور
-      task_date_picker.dart       -> بيفتح date picker وبعده time picker ويرجع النص متنسق
-    widgets/
-      custom_txt_field.dart       -> حقل واحد بيستخدم في كل الشاشات:
-                                     prefix icon اختياري، وضع باسورد بزرار إظهار،
-                                     maxLines، readOnly، و onTap (للتاريخ)
-  features/
-    splash_screen/
-    starting_screen/              -> Let's Start
-    register_screen/
-    login_screen/
-    home_screen/
-      data/models/task_model.dart -> id, title, description, group, dateTime, isDone
-                                     + قائمة المجموعات وأيقونة ولون كل مجموعة + copyWith
-      presentation/
-        home_screen.dart          -> ماسك List<TaskModel> وبيضيف/يعدل/يمسح بـ setState
-        tasks_list_widgets.dart   -> العنوان والعداد والكروت
-        task_card_item.dart
-        empty_task_widget.dart
-        group_dropdown.dart       -> dropdown المجموعات، مشترك بين Add و Edit
-        add_task_screen.dart
-        edit_task_screen.dart
-    profile_screen/
-      profile_screen.dart, profile_menu_item.dart,
-      update_profile_screen.dart, change_password_screen.dart, settings_screen.dart
+The app is now fully connected to the API and every form is validated:
 
-تدفق البيانات:
-الرئيسية هي اللي ماسكة الليستة. شاشة الإضافة والتعديل مش بيعدلوا في الليستة مباشرة،
-بيرجعوا النتيجة بـ Navigator.pop (TaskModel أو 'delete') والرئيسية هي اللي تقرر وتعمل setState.
+1. Register: optional image picked from the gallery and previewed at the top.
+   Fields are validated as you type. If the server returns tokens, the user goes straight to Home;
+   otherwise they're sent to Login with an "Account created" message.
 
-مفيش أي باكدجات خارجية غير cupertino_icons.
+2. Login: on success the tokens are saved on the device. Wrong credentials show the server's
+   message. Next time the app opens, the splash screen checks for a saved session and opens Home.
 
-المرحلة الجاية:
-- ربط التسجيل والدخول بالـ API وحفظ الـ token.
-- حفظ المهام (API أو local database) بدل الذاكرة.
-- اسم المستخدم وصورته من البروفايل بدل الاسم الثابت.
-- تفعيل العربي والإنجليزي فعلياً من الإعدادات.
+3. Session: when a request fails because the access token expired, the app requests a new one
+   with the refresh token and repeats the request automatically, so the user doesn't notice.
+   If the refresh fails, the user is logged out and returned to Login with a message.
+
+4. Home: shows the user's name and picture from the server, and their tasks with
+   loading / error with "Try again" / empty states, plus pull to refresh.
+   Tapping the header opens the profile.
+
+5. Add Task: title and description are required (with length limits). The image is optional.
+   Buttons show a loader while sending and can't be pressed twice.
+
+6. Edit Task: all fields can be changed, including a new image. "Mark as Done" toggles the status,
+   "Update" saves everything, and "Delete" asks for confirmation first.
+   Note: the API only stores the title, description and image of a task, so the group,
+   end time and Done status are saved on the phone for each task and stay after restarting the app.
+
+7. Profile: loads the latest user data. "Profile" updates the name and/or picture.
+   "Change Password" validates all three fields before sending. "Log Out" and "Delete Account"
+   both ask for confirmation; deleting the account clears everything saved on the phone.
+
+8. Errors: no internet, timeouts and server errors are all shown as short readable messages.
+
+To run it, the API base URL needs to be set (it isn't included in the Postman collection).

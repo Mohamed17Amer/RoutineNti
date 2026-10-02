@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:my_creative_routine/core/utils/app_assets.dart';
 import 'package:my_creative_routine/core/utils/app_colors.dart';
 import 'package:my_creative_routine/core/utils/app_fonts.dart';
+import 'package:my_creative_routine/core/utils/app_messages.dart';
+import 'package:my_creative_routine/core/utils/image_picker_helper.dart';
 import 'package:my_creative_routine/core/utils/task_date_picker.dart';
+import 'package:my_creative_routine/core/utils/validators.dart';
+import 'package:my_creative_routine/core/widgets/app_button.dart';
 import 'package:my_creative_routine/core/widgets/custom_txt_field.dart';
+import 'package:my_creative_routine/features/home_screen/data/models/task_model.dart';
+import 'package:my_creative_routine/features/home_screen/data/services/task_service.dart';
 import 'package:my_creative_routine/features/home_screen/presentation/widgets/group_dropdown.dart';
-
-import '../../data/models/task_model.dart';
+import 'package:my_creative_routine/features/home_screen/presentation/widgets/task_image_picker.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -16,11 +20,15 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  final TaskService _taskService = TaskService();
 
   String _selectedGroup = TaskModel.groups.first;
+  PickedImage? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -30,31 +38,38 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final image = await ImagePickerHelper.pickFromGallery();
+    if (image != null && mounted) setState(() => _image = image);
+  }
+
   Future<void> _pickEndTime() async {
     final value = await TaskDatePicker.pick(context);
     if (value != null) _timeController.text = value;
   }
 
-  void _addTask() {
-    final title = _titleController.text.trim();
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a task title')),
-      );
-      return;
-    }
+  Future<void> _addTask() async {
+    FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
 
-    Navigator.pop(
-      context,
-      TaskModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: title,
+    setState(() => _isLoading = true);
+    try {
+      await _taskService.addTask(
+        title: _titleController.text.trim(),
         description: _descController.text.trim(),
         group: _selectedGroup,
         dateTime:
             _timeController.text.isNotEmpty ? _timeController.text : 'Today',
-      ),
-    );
+        image: _image,
+      );
+      if (!mounted) return;
+      AppMessages.show(context, 'Task added');
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) AppMessages.showError(context, e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -74,53 +89,45 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                AppAssets.flagPng,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TaskImagePicker(pickedImage: _image, onTap: _pickImage),
+              const SizedBox(height: 20),
+              CustomTextField(
+                controller: _titleController,
+                hintText: 'Title',
+                validator: Validators.taskTitle,
               ),
-            ),
-            const SizedBox(height: 20),
-            CustomTextField(controller: _titleController, hintText: 'Title'),
-            const SizedBox(height: 14),
-            CustomTextField(
-              controller: _descController,
-              hintText: 'Description',
-              maxLines: 3,
-            ),
-            const SizedBox(height: 14),
-            GroupDropdown(
-              value: _selectedGroup,
-              onChanged: (group) => setState(() => _selectedGroup = group),
-            ),
-            const SizedBox(height: 14),
-            CustomTextField(
-              controller: _timeController,
-              hintText: 'End Time',
-              prefixIcon: Icons.calendar_month_outlined,
-              readOnly: true,
-              onTap: _pickEndTime,
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
-                ),
+              const SizedBox(height: 14),
+              CustomTextField(
+                controller: _descController,
+                hintText: 'Description',
+                maxLines: 3,
+                validator: Validators.taskDescription,
+              ),
+              const SizedBox(height: 14),
+              GroupDropdown(
+                value: _selectedGroup,
+                onChanged: (group) => setState(() => _selectedGroup = group),
+              ),
+              const SizedBox(height: 14),
+              CustomTextField(
+                controller: _timeController,
+                hintText: 'End Time',
+                prefixIcon: Icons.calendar_month_outlined,
+                readOnly: true,
+                onTap: _pickEndTime,
+              ),
+              const SizedBox(height: 30),
+              AppButton(
+                text: 'Add Task',
+                isLoading: _isLoading,
                 onPressed: _addTask,
-                child: const Text('Add Task', style: AppFonts.buttonText),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
